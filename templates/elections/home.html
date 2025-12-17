@@ -1,0 +1,41 @@
+{% extends 'elections/base.html' %}
+
+{% block title %}首页 - 总统选举投票系统{% endblock %}
+
+{% block content %}
+<h2>欢迎来到总统选举投票系统</h2>
+
+{% if current_election %}
+    <div style="background: #e8f5e8; padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+        <h3>当前选举: {{ current_election.title }}</h3>
+        <p>{{ current_election.description }}</p>
+        <p><strong>选举时间:</strong> {{ current_election.start_date|date:"Y年m月d日 H:i" }} - {{ current_election.end_date|date:"Y年m月d日 H:i" }}</p>
+        
+        {% if user.is_authenticated %}
+            <a href="{% url 'vote' %}" style="background: #27ae60; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;">立即投票</a>
+        {% else %}
+            <p>请先<a href="{% url 'login' %}">登录</a>或<a href="{% url 'register' %}">注册</a>以参与投票。</p>
+        {% endif %}
+    </div>
+{% else %}
+    <div style="background: #f8d7da; padding: 1rem; border-radius: 5px;">
+        <p>目前没有活跃的选举。</p>
+    </div>
+{% endif %}
+
+<div style="margin-top: 2rem;">
+    <h3>系统概览</h3>
+    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+        <div style="flex: 1; background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4>候选人数量</h4>
+            <p style="font-size: 2rem; color: #3498db; margin: 0;">{{ candidates_count }}</p>
+        </div>
+        <div style="flex: 1; background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4>投票状态</h4>
+            <p style="font-size: 1.2rem; color: {% if current_election %}#27ae60{% else %}#e74c3c{% endif %}; margin: 0;">
+                {% if current_election %}进行中{% else %}未开始{% endif %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

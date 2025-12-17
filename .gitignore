@@ -1,0 +1,31 @@
+# Python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django数据�?
+db.sqlite3
+db.sqlite3-journal
+
+# 虚拟环境
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 项目文件
+media/
+staticfiles/
+
+# 环境变量
+.env
+.env.local

@@ -1,0 +1,126 @@
+{% extends "elections/base.html" %}
+
+{% block title %}登录 - 总统选举投票系统{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <h2 class="auth-title">用户登录</h2>
+    
+    <div class="auth-form">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                用户名或密码不正确，请重试。
+            </div>
+            {% endif %}
+            
+            <div class="form-group">
+                <label for="id_username">用户名:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error-text">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group">
+                <label for="id_password">密码:</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error-text">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block">
+                <i class="fas fa-sign-in-alt"></i> 登录
+            </button>
+        </form>
+        
+        <div class="auth-links">
+            <p>还没有账户？ <a href="{% url 'register' %}">立即注册</a></p>
+            <p>或返回 <a href="{% url 'home' %}">首页</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+    }
+    
+    .auth-title {
+        text-align: center;
+        color: var(--primary-blue);
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--neutral-light);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--neutral-dark);
+    }
+    
+    .form-group input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: var(--transition);
+    }
+    
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+    }
+    
+    .error-text {
+        color: var(--danger-color);
+        font-size: 14px;
+        margin-top: 5px;
+    }
+    
+    .btn-block {
+        width: 100%;
+        padding: 14px;
+        margin-top: 20px;
+    }
+    
+    .auth-links {
+        margin-top: 25px;
+        text-align: center;
+        color: var(--neutral-gray);
+    }
+    
+    .auth-links a {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 600;
+    }
+    
+    .auth-links a:hover {
+        text-decoration: underline;
+    }
+    
+    .auth-links p {
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}

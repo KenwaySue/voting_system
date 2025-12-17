@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}总统选举投票系统{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'elections/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header>
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <i class="fas fa-vote-yea"></i>
+                    <h1>总统选举投票系统</h1>
+                </div>
+                
+                <nav class="nav-links">
+                    <a href="{% url 'home' %}" {% if request.path == '/' %}class="active"{% endif %}>
+                        <i class="fas fa-home"></i> 投票首页
+                    </a>
+                    <a href="{% url 'results' %}" {% if request.path == '/results/' %}class="active"{% endif %}>
+                        <i class="fas fa-poll"></i> 投票结果
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-info-circle"></i> 选举信息
+                    </a>
+                    <a href="#">
+                        <i class="fas fa-user-shield"></i> 安全验证
+                    </a>
+                    {% if user.is_staff or user.is_superuser %}
+                    <a href="/admin/" {% if '/admin/' in request.path %}class="active"{% endif %}>
+                        <i class="fas fa-cog"></i> 管理后台
+                    </a>
+                    {% endif %}
+                </nav>
+                
+                <div class="user-info">
+                    {% if user.is_authenticated %}
+                    <div class="user-avatar">{{ user.username|first|upper }}</div>
+                    <div>
+                        <div class="user-name">{{ user.username }}</div>
+                        <div class="user-status">
+                            {% if has_voted %}
+                            <span class="status-badge voted"><i class="fas fa-check-circle"></i> 已投票</span>
+                            {% else %}
+                            <span class="status-badge not-voted"><i class="fas fa-clock"></i> 未投票</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="auth-links">
+                        <a href="{% url 'login' %}" class="btn-login">登录</a>
+                        <a href="{% url 'register' %}" class="btn-register">注册</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- 消息提示 -->
+    {% if messages %}
+    <div class="messages-container">
+        <div class="container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+                <button class="close-message">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- 主内容区域 -->
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-shield-alt"></i> 投票安全</h3>
+                    <p>本投票系统采用军事级加密技术和多重身份验证，确保每一张选票的安全性和匿名性。</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-info-circle"></i> 选举信息</h3>
+                    <p>2023年总统选举投票时间：10月15日至11月7日。如需帮助，请拨打选举热线 1-800-VOTE-NOW。</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3><i class="fas fa-user-check"></i> 选民资格</h3>
+                    <p>所有年满18周岁且完成选民登记的公民均有权参与本次总统选举投票。</p>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2023 国家选举委员会 - 总统选举投票系统。保留所有权利。</p>
+                <p>本系统为演示版本，实际投票系统需符合国家选举法规。</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // 关闭消息提示
+        document.querySelectorAll('.close-message').forEach(button => {
+            button.addEventListener('click', function() {
+                this.parentElement.remove();
+            });
+        });
+        
+        // 自动关闭消息提示
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(alert => {
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
