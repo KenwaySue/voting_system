@@ -4,8 +4,9 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Django数据�?
+# Django
 db.sqlite3
+*.log
 db.sqlite3-journal
 
 # 虚拟环境
@@ -23,8 +24,8 @@ env/
 Thumbs.db
 
 # 项目文件
-media/
-staticfiles/
+/media/
+/staticfiles/
 
 # 环境变量
 .env
