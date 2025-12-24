@@ -1,15 +1,20 @@
 from django.urls import path
 from . import views
 
+app_name = 'elections'
+
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('candidates/', views.candidate_list, name='candidate_list'),
-    path('candidates/<int:candidate_id>/', views.candidate_detail, name='candidate_detail'),
-    path('vote/', views.vote, name='vote'),
+    path('', views.election_list, name='election_list'),
+    path('<int:election_id>/', views.election_detail, name='election_detail'),
+    path(
+        '<int:election_id>/vote/<int:candidate_id>/',
+        views.vote,
+        name='vote'
+    ),
+    # 添加全局结果页面（不需要参数）
     path('results/', views.results, name='results'),
+    # 单个选举结果页面（需要参数）
+    path('<int:election_id>/results/', views.election_results, name='election_results'),
+    # API 接口
     path('api/results/', views.api_results, name='api_results'),
-    path('login/', views.custom_login, name='login'),
-    path('register/', views.register, name='register'),
-    path('logout/', views.custom_logout, name='logout'),
-    path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]

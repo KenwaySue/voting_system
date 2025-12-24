@@ -93,8 +93,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+# 👇 新增：关闭浏览器后自动退出登录
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 # 默认主键类型
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 # 在开发环境中启用静态文件服务
 if DEBUG:
     STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]

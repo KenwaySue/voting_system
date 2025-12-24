@@ -1,0 +1,235 @@
+{% extends "elections/base.html" %}
+
+{% block title %}投票结果 - 总统选举投票系统{% endblock %}
+
+{% block content %}
+<div class="results-page">
+    <div class="container">
+        <h1><i class="fas fa-poll"></i> 投票结果</h1>
+        <p class="section-subtitle">以下是所有选举的投票结果统计</p>
+        
+        {% for data in results_data %}
+        <div class="election-results">
+            <div class="election-header">
+                <h2>{{ data.election.title }}</h2>
+                <div class="election-meta">
+                    <span><i class="fas fa-calendar"></i> {{ data.election.start_date|date:"Y年m月d日" }} - {{ data.election.end_date|date:"Y年m月d日" }}</span>
+                    <span><i class="fas fa-check-circle"></i> 总票数: {{ data.total_votes }}</span>
+                    <span class="status-badge {% if data.election.is_active %}active{% else %}ended{% endif %}">
+                        {% if data.election.is_active %}进行中{% else %}已结束{% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="candidates-results">
+                {% for result in data.results %}
+                <div class="candidate-result">
+                    <div class="result-header">
+                        {% if result.candidate.photo %}
+                        <img src="{{ result.candidate.photo.url }}" alt="{{ result.candidate.full_name }}" class="result-photo">
+                        {% else %}
+                        <div class="result-photo placeholder"><i class="fas fa-user-tie"></i></div>
+                        {% endif %}
+                        <div class="result-info">
+                            <h3>{{ result.candidate.full_name }}</h3>
+                            <p>{{ result.candidate.party }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-stats">
+                        <div class="vote-count">
+                            <span class="count">{{ result.vote_count }}</span>
+                            <span class="label">票</span>
+                        </div>
+                        <div class="percentage">
+                            <span class="count">{{ result.percentage|floatformat:1 }}</span>
+                            <span class="label">%</span>
+                        </div>
+                    </div>
+                    
+                    {% if data.total_votes > 0 %}
+                    <div class="progress-bar">
+                        <div class="bar" style="width: {{ result.percentage }}%; background-color: {{ result.candidate.color }};"></div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="election-actions">
+                <a href="{% url 'elections:election_detail' data.election.id %}" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> 查看详情
+                </a>
+                <a href="{% url 'elections:election_results' data.election.id %}" class="btn btn-primary">
+                    <i class="fas fa-chart-bar"></i> 详细结果
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="no-results">
+            <i class="fas fa-inbox"></i>
+            <p>暂无选举结果</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.results-page {
+    padding: 30px 0;
+}
+
+.election-results {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.election-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 30px;
+}
+
+.election-header h2 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+}
+
+.election-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.election-meta span {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.candidates-results {
+    padding: 30px;
+    display: grid;
+    gap: 20px;
+}
+
+.candidate-result {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.result-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.result-photo.placeholder {
+    background: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 24px;
+}
+
+.result-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.result-info p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.result-stats {
+    display: flex;
+    gap: 30px;
+}
+
+.vote-count,
+.percentage {
+    text-align: center;
+}
+
+.vote-count .count,
+.percentage .count {
+    font-size: 28px;
+    font-weight: bold;
+    color: #667eea;
+    display: block;
+}
+
+.vote-count .label,
+.percentage .label {
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+}
+
+.progress-bar {
+    position: relative;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    flex: 1;
+}
+
+.progress-bar .bar {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.election-actions {
+    padding: 20px 30px;
+    border-top: 1px solid #eee;
+    display: flex;
+    gap: 10px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 60px;
+    color: #999;
+}
+
+.no-results i {
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.status-badge.active {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.status-badge.ended {
+    background: rgba(158, 158, 158, 0.2);
+    color: #999;
+}
+</style>
+{% endblock %}

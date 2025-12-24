@@ -23,7 +23,7 @@
                     <a href="{% url 'home' %}" {% if request.path == '/' %}class="active"{% endif %}>
                         <i class="fas fa-home"></i> 投票首页
                     </a>
-                    <a href="{% url 'results' %}" {% if request.path == '/results/' %}class="active"{% endif %}>
+                    <a href="{% url 'elections:results' %}" {% if '/elections/results/' in request.path %}class="active"{% endif %}>
                         <i class="fas fa-poll"></i> 投票结果
                     </a>
                     <a href="#">
@@ -51,6 +51,10 @@
                             <span class="status-badge not-voted"><i class="fas fa-clock"></i> 未投票</span>
                             {% endif %}
                         </div>
+                        <!-- 👇 新增：退出登录按钮 -->
+                        <a href="{% url 'logout' %}" class="btn-logout" style="display: inline-block; margin-top: 5px; font-size: 12px; color: #e74c3c; text-decoration: none;">
+                            <i class="fas fa-sign-out-alt"></i> 退出登录
+                        </a>
                     </div>
                     {% else %}
                     <div class="auth-links">

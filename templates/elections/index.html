@@ -227,7 +227,26 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // ================== 新增：获取 CSRF Token 的函数 ==================
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    // =============================================================
+
     // 全局变量
     let selectedCandidateId = null;
     let selectedCandidateName = '';
@@ -254,10 +273,18 @@
     function submitVote() {
         closeVoteModal();
         
+        // 修复：简化 URL 构造方式
+        // 确保 current_election 存在，否则会报错
+        var electionId = "{{ current_election.id|default:0 }}";
+        var voteUrl = "/elections/" + electionId + "/vote/" + selectedCandidateId + "/";
+
         // 发送投票请求到服务器
         $.ajax({
-            url: "{% url 'vote' %}",
+            url: voteUrl,
             method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken')  // 修复：添加 CSRF Token
+            },
             data: {
                 candidate_id: selectedCandidateId
             },
@@ -288,7 +315,8 @@
                     alert('投票失败: ' + response.message);
                 }
             },
-            error: function() {
+            error: function(xhr, status, error) {
+                console.error("Error:", error);
                 alert('网络错误，请稍后重试');
             }
         });
@@ -304,7 +332,7 @@
     // 更新投票结果
     function updateResults() {
         $.ajax({
-            url: "{% url 'api_results' %}",
+            url: "{% url 'elections:api_results' %}",
             method: "GET",
             success: function(response) {
                 if (response.success) {
@@ -324,6 +352,9 @@
                     // 更新最后更新时间
                     document.getElementById('last-update-time').textContent = response.timestamp;
                 }
+            },
+            error: function() {
+                console.error("更新结果失败");
             }
         });
     }

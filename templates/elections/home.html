@@ -12,7 +12,8 @@
         <p><strong>选举时间:</strong> {{ current_election.start_date|date:"Y年m月d日 H:i" }} - {{ current_election.end_date|date:"Y年m月d日 H:i" }}</p>
         
         {% if user.is_authenticated %}
-            <a href="{% url 'vote' %}" style="background: #27ae60; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;">立即投票</a>
+            <!-- 修复：修改链接指向选举列表页面 -->
+            <a href="{% url 'elections:election_list' %}" style="background: #27ae60; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px;">立即投票</a>
         {% else %}
             <p>请先<a href="{% url 'login' %}">登录</a>或<a href="{% url 'register' %}">注册</a>以参与投票。</p>
         {% endif %}
@@ -28,7 +29,8 @@
     <div style="display: flex; gap: 1rem; margin-top: 1rem;">
         <div style="flex: 1; background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h4>候选人数量</h4>
-            <p style="font-size: 2rem; color: #3498db; margin: 0;">{{ candidates_count }}</p>
+            <!-- 修复：添加 default 防止变量未定义时报错 -->
+            <p style="font-size: 2rem; color: #3498db; margin: 0;">{{ candidates_count|default:0 }}</p>
         </div>
         <div style="flex: 1; background: white; padding: 1rem; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h4>投票状态</h4>
